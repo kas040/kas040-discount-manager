@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "6518b39899bdb46791575ee07dc786d7"
-application_url = "https://example.com/"
+application_url = "https://shopping-walked-though-anyway.trycloudflare.com"
 embedded = true
 name = "KAS040 - Discount Manager"
 handle = "kas040-discount-manager"
@@ -22,10 +22,16 @@ api_version = "2025-01"
 scopes = "write_products"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://shopping-walked-though-anyway.trycloudflare.com/auth/callback",
+  "https://shopping-walked-though-anyway.trycloudflare.com/auth/shopify/callback",
+  "https://shopping-walked-though-anyway.trycloudflare.com/api/auth/callback"
+]
 
 [pos]
 embedded = false
 
 [build]
 include_config_on_deploy = true
+dev_store_url = "red-devil-essentials-1-1.myshopify.com"
+automatically_update_urls_on_dev = true

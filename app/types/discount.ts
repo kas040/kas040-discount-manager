@@ -41,3 +41,16 @@ export interface DiscountRule {
     product: Product;
     rule: DiscountRule;
   }
+
+  export interface DiscountView {
+    id: string;
+    name: string;
+    description?: string;
+    type: 'percentage' | 'fixed_amount';
+    value: number;
+    startDate: Date;
+    endDate?: Date;
+    isActive: boolean;
+    productCount: number;
+    totalDiscount: number;
+  }

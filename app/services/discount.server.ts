@@ -1,5 +1,5 @@
 import prisma from '../db.server';
-import type { DiscountRule, Filter, Product } from '../types/discount';
+import type { DiscountRule, Filter, Product, DiscountView } from '../types/discount';
 import { authenticate } from '../shopify.server';
 
 export async function createDiscountRule(
@@ -125,6 +125,35 @@ export async function applyDiscountRule(request: Request, ruleId: string): Promi
       },
     });
   }
+}
+
+export async function getDiscountViews(request: Request): Promise<DiscountView[]> {
+  const { session } = await authenticate.admin(request);
+
+  const rules = await prisma.discountRule.findMany({
+    where: { shop: session.shop },
+    include: {
+      products: true,
+    },
+  });
+
+  return rules.map(rule => ({
+    id: rule.id,
+    name: rule.name,
+    description: rule.description,
+    type: rule.type,
+    value: rule.value,
+    startDate: rule.startDate,
+    endDate: rule.endDate,
+    isActive: rule.isActive,
+    productCount: rule.products.length,
+    totalDiscount: rule.products.reduce((total, product) => {
+      const discount = rule.type === 'percentage'
+        ? product.originalPrice * (rule.value / 100)
+        : rule.value;
+      return total + discount;
+    }, 0),
+  }));
 }
 
 function buildFilterConditions(filters: Filter[]): string {
