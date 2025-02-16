@@ -30,3 +30,56 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model DiscountRule {
+  id          String      @id @default(uuid())
+  shop        String
+  name        String
+  description String?
+  type        String      // percentage, fixed_amount
+  value       Float
+  startDate   DateTime
+  endDate     DateTime?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  filters     Filter[]
+  products    Product[]
+  history     History[]
+}
+
+model Filter {
+  id            String        @id @default(uuid())
+  ruleId        String
+  type          String        // category, vendor, tag, product
+  value         String
+  createdAt     DateTime      @default(now())
+  rule          DiscountRule  @relation(fields: [ruleId], references: [id])
+}
+
+model Product {
+  id            String        @id
+  shop          String
+  title         String
+  vendor        String?
+  originalPrice Float
+  currentPrice  Float
+  comparePrice  Float?
+  ruleId        String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  rule          DiscountRule? @relation(fields: [ruleId], references: [id])
+  history       History[]
+}
+
+model History {
+  id            String        @id @default(uuid())
+  productId     String
+  ruleId        String
+  oldPrice      Float
+  newPrice      Float
+  createdAt     DateTime      @default(now())
+  createdBy     String
+  product       Product       @relation(fields: [productId], references: [id])
+  rule          DiscountRule  @relation(fields: [ruleId], references: [id])
+}
