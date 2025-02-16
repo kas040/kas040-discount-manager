@@ -12,6 +12,9 @@ export async function createDiscountRule(
     data: {
       ...data,
       shop: session.shop,
+      filters: {
+        create: data.filters,
+      },
     },
     include: {
       filters: true,
