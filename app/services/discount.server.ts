@@ -20,7 +20,7 @@ export async function createDiscountRule(
       filters: true,
       products: true,
     },
-  });
+  }) as DiscountRule;
 
   // Apply the rule to matching products
   await applyDiscountRule(request, rule.id);
@@ -32,8 +32,8 @@ export async function applyDiscountRule(request: Request, ruleId: string): Promi
   const { admin, session } = await authenticate.admin(request);
   const rule = await prisma.discountRule.findUnique({
     where: { id: ruleId },
-    include: { filters: true },
-  });
+    include: { filters: true, products: true },
+  }) as (DiscountRule & { filters: Filter[] }) | null;
 
   if (!rule || !rule.isActive) return;
 
@@ -144,7 +144,7 @@ export async function getDiscountViews(request: Request): Promise<DiscountView[]
     id: rule.id,
     name: rule.name,
     description: rule.description,
-    type: rule.type,
+    type: rule.type as 'percentage' | 'fixed_amount',
     value: rule.value,
     startDate: rule.startDate,
     endDate: rule.endDate,
